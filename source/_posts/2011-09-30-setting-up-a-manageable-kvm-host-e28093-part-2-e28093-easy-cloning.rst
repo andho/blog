@@ -1,0 +1,199 @@
+---
+date: '2011-09-30 22:13:45'
+layout: post
+slug: setting-up-a-manageable-kvm-host-%e2%80%93-part-2-%e2%80%93-easy-cloning
+status: publish
+title: Setting up a manageable KVM host – part 2 – Easy Cloning
+wordpress_id: '181'
+categories:
+- Server Administration
+- Virtualization
+tags:
+- cloning
+- KVM
+- ubuntu
+- virtualization
+---
+
+.. role:: code
+   :class: inline-code
+
+This is part 2 of a 2 part series (forgot what part 3 was about). In this post I'll be explaining how you can setup a virtual machine specifically for cloning. I cannot remember where I got the information about the ssh keys and interface rules and I would like to say sorry that I cannot attribute it.
+
+.. more
+
+Preparing the essentials
+========================
+
+First thing you need to do is create your base image. I just used the instructions provided in the `first part of the series <http://blog.andho.com/2011-08-11/setting-up-a-manageable-kvm-host-part-1-using-lvm-for-storage/>`_ to create a simple Ubuntu 10.04 image using vmbuilder. I made it as small as I would need a VM to be: 6GB hard disk, 256 MB Ram.
+
+Next you need to prepare this image for cloning. The package I'm using for cloning is virt-clone. The exact command is as follows:
+
+.. sourcecode:: console
+
+   virt-clone -o originalvm -n newvmname -f /dev/vg1/clonelv --force
+
+
+But before the cloning can start, the original VM has to be prepared for cloning. The following concerns has to be taken care of.
+
+
+Remove SSH host keys and network interface rules
+------------------------------------------------
+
+
+The SSH Host keys needs to be removed because you don't want every clone you make to have the same ssh host keys. The keys are usually found in '/etc/ssh/*host*key*' and are recreated if they are found to be missing. The following script can be used in ubuntu machines to remove both the ssh keys and network interface rules.
+
+Copy the following script in to '/usr/local/sbin/cloneprep' on the source VM.
+
+.. sourcecode:: bash
+   :caption: /usr/local/sbin/cloneprep
+
+   #!/bin/sh
+
+   echo "TEMPALTE PREPATATION BEFORE CLONING"
+   echo
+   echo "This script will prepare this host for cloning. The network interface"
+   echo "name rules and ssh host keys will be deleted, but they will be"
+   echo "regenerated at the next boot (run sudo dpkg-reconfigure openssh-server"
+   echo "to regenerate ssh keys if needed)."
+   echo
+   echo "Are you sure you want to remove the ssh keys and network interfaces"
+   echo -n "rules on this host [y/N]"
+   
+   read YN
+   
+   if [ "$YN" != "y" ]; then
+      echo abort.
+      exit 1
+   fi
+   
+   echo
+   echo Removing persistent network interface rules...
+   rm -rf /etc/udev/rules.d/70-persistent-net.rules
+   
+   echo Removing host ssh keys...
+   rm -rf /etc/ssh/*host*key*
+   
+   echo
+   echo Your image is now ready for cloning. The machine will shut down.
+   echo
+   
+   for i in 12 11 10 9 8 7 6 5 4 3 2 1; do echo "Halting machine in $i seconds (Ctrl-C to abort)"; sleep1; done
+   halt
+
+Make the file executable with the following command :code:`chmod +x /usr/local/sbin/cloneprep`
+
+Prepare scripts for easy clone configuration
+--------------------------------------------
+
+
+The following script should be run after making a clone in the cloned VM. Put this file in '/usr/local/sbin/cloneconf' in the source VM.
+
+.. sourcecode:: bash
+   :caption: /usr/local/sbin/cloneconf
+
+    #!/bin/sh
+    
+    echo "GUEST CONFIGURATION AFTER CLONING"
+    echo
+    
+    GUESTNAME=""
+    echo -n "What is the hostname of this guest? "
+    read GUESTNAME
+    if [ "$GUESTNAME" = "" ]; then
+      echo "You did not specify a guest name"
+      exit 1
+    fi
+    
+    GUESTIP=""
+    echo -n "What is the ip of this guest? "
+    read GUESTIP
+    if [ "$GUESTIP" = "" ]; then
+      echo "You did not specify an ip"
+    fi
+    
+    echo "This script will configure the host with the following settings:"
+    echo Hostname: $GUESTNAME
+    echo IP address: $GUESTIP
+    echo
+    echo /etc/hostname:
+    echo $GUESTNAME
+    echo
+    echo /etc/hosts:
+    cat /usr/local/etc/clonehosts | sed -e "s/GUESTNAME/$GUESTNAME/g"
+    echo
+    echo /etc/network/interfaces:
+    cat /usr/local/etc/cloneinterfaces | sed -e "s/GUESTIP/$GUESTIP/g"
+    echo
+    echo -n "Are you sure you want to continue [y/N]? "
+    
+    read YN
+    if [ "$YN" != "y" ]; then
+      echo abort.
+      exit 1
+    fi
+    
+    echo $GUESTNAME > /etc/hostname
+    cat /usr/local/etc/clonehosts | sed -e "s/GUESTNAME/$GUESTNAME/g" > /etc/hosts
+    cat /usr/local/etc/cloneinterfaces | sed -e "s/GUESTIP/$GUESTIP/g" > /etc/network/interfaces
+    test -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server
+    
+    echo
+    echo Done. The machine will now be rebooted to make changes effective.
+    echo
+    for i in 12 11 10 9 8 7 6 5 4 3 2 1; do echo "Rebooting in $i seconds (Ctrl-C to abort)"; sleep 1; done
+    reboot
+
+Make the file executable with :code:`chmod +x /usr/local/sbin/cloneconf`.
+
+Now you need to put these files inside '/usr/local/etc/' in the source VM. These files are used by the above scripts.
+
+.. sourcecode:: bash
+   :caption: /usr/local/etc/clonehosts
+
+    127.0.0.1 localhost
+    127.0.1.1 GUESTNAME.alliedinsure.com.mv GUESTNAME
+    
+    # The following lines are desirable for IPv6 capable hosts
+    ::1 ip6-localhost ip6-loopback
+    fe00::0 ip6-localnet
+    ff00::0 ip6-mcastprefix
+    ff02::1 ip6-allnodes
+    ff02::2 ip6-allrouters
+    ff02::3 ip6-allhosts
+
+.. sourcecode:: bash
+   :caption: /usr/local/etc/cloneinterfaces
+
+    # This file describes the network interfaces available on your system
+    # and how to activate them. For more information, see interfaces(5).
+    
+    # The loopback network interface
+    auto lo
+    iface lo inet loopback
+    
+    # The primary network interface
+    auto eth0
+    iface eth0 inet static
+        address GUESTIP
+        netmask 255.255.255.0
+        network 192.168.0.0
+        broadcast 192.168.0.255
+        gateway 192.168.123.1
+        # dns-* options are implemented by the resolvconf package, if installed
+        dns-nameservers 192.168.123.1
+
+You can change these files according to the configuration you want, except the GUESTNAME and GUESTIP instances. Those will be replaced by the cloneconf script with the name and ip you provide to it.
+
+
+Let's get it started
+====================
+
+Now it's time to create your clones. The following instructions assume the following: you have a source VM that you want to clone called 'originalvm', you want to create a VM called 'newvmname', you want the disk file for 'newvmname' to be '/dev/vg1/clonelv' and vg1 is the name of you Volume Group.
+	
+1. Create the new LV on the host machine. :code:`lvcreate -L6G -n clonelv vg1`
+2. If the source VM is not prepped, then run the instance and run the :code:`/usr/share/sbin/cloneprep` on it.
+3. The source VM should be prepped and turned off now. Run virt-clone command: :code:`virt-clone -o originalvm -n newvmname -f /dev/vg1/clonelv --force`.
+4. Start the new vm using Virtual Machine Manager and open the VNC view, and run the cloneconf file :code:`/usr/local/sbin/cloneconf`. You will be asked for the Hostname and the IP you want to give to the new VM. Fill it in, and you are finished.
+
+You now have cloned a VM. You can used it, discard it and think nothing of it.

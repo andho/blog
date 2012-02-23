@@ -1,0 +1,19 @@
+---
+date: '2011-06-15 22:27:00'
+layout: post
+slug: alcohol
+status: publish
+title: Alcohol
+wordpress_id: '7'
+categories:
+- Jokes
+tags:
+- alcohol
+- comedy
+- Joke
+- laughs
+---
+
+**Guy 1**: After alcohol was legallized look at how the alcohol related death rate has risen.  
+
+**Guy 2**: Yeah but look at the alcohol related birth rate.
