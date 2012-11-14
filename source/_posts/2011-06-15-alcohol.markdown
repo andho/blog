@@ -5,6 +5,7 @@ slug: alcohol
 status: publish
 title: Alcohol
 wordpress_id: '7'
+comments: true
 categories:
 - Jokes
 tags:

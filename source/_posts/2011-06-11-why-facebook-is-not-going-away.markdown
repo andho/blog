@@ -4,6 +4,7 @@ layout: post
 slug: None
 title: Why facebook is not going away
 wordpress_id: '4'
+comments: true
 published: false
 ---
 

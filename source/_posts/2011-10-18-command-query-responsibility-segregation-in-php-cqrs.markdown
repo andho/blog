@@ -5,6 +5,7 @@ slug: command-query-responsibility-segregation-in-php-cqrs
 status: publish
 title: Command Query Responsibility Segregation in PHP - CQRS
 wordpress_id: '210'
+comments: true
 categories:
 - Architecture
 - Domain Driven Design

@@ -5,6 +5,7 @@ slug: modifying-private-or-protected-properties-in-php
 status: publish
 title: Modifying private or protected properties in php
 wordpress_id: '6'
+comments: true
 categories:
 - PHP
 - Programming

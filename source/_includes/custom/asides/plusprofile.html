@@ -1,0 +1,65 @@
+<!--
+JSON-P Google Plus fetcher for Octopress
+(c) Jolam Jiang // MIT License
+
+You can see the tutorial of adding sidebar here:
+http://bandj.us/jo/blog/blog/2011/12/03/adding-google-plus-sidebar-to-octopress/
+-->
+{% if site.googleplus_user %}
+<section>
+  <!-- load jquery -->
+  <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyCeY6R0voRNKcKeUZb1mxvmm5QZcCK3lgM"></script>
+  <script type="text/javascript">
+    google.load("jquery", "1.7.1");
+  </script>
+  <!-- load jquery end -->
+  <script type="text/javascript">
+
+    $.noConflict();
+    jQuery(document).ready(function(){
+      plusLoadingStart();
+    });
+    jQuery.noConflict();
+
+    function plusLoadingStart() {
+      jQuery("#gplus_sidebar").css("display", "none");
+      getJSON();
+    }
+
+    function getJSON() {
+        jQuery.getJSON('https://www.googleapis.com/plus/v1/people/109372953760940036839?fields=tagline%2CdisplayName%2Cimage&pp=1&key=AIzaSyCeY6R0voRNKcKeUZb1mxvmm5QZcCK3lgM&callback=?', function(resp){
+          updateProfile(resp);
+        });
+        jQuery.getJSON('https://www.googleapis.com/plus/v1/people/109372953760940036839/activities/public?alt=json&maxResults={{ site.googleplus_post_amount }}&fields=items&pp=1&key=AIzaSyCeY6R0voRNKcKeUZb1mxvmm5QZcCK3lgM&callback=?', function(resp){
+          updatePosts(resp);
+        });
+      jQuery("#gplus_sidebar").css("display","block");
+    }
+
+    function updateProfile(resp) {
+      console.log(resp);
+      jQuery('#gplus_sidebar_profile_displayName').html(resp.displayName);
+      jQuery('#gplus_sidebar_profile_aboutMe').html(resp.tagline);
+      jQuery('#gplus_sidebar_profile_img').attr("src", resp.image.url);
+    }
+
+  </script>
+  <style>
+    #gplus_sidebar_profile {
+      display: {{ site.googleplus_profile_display }};
+    }
+    #gplus_sidebar_profile_img {
+      margin-top: .6em !important;
+    }
+    #gplus_sidebar_profile p {
+      margin-bottom: .1em !important;
+    }
+  </style>
+  <div id="gplus_sidebar_profile">
+    <h1>G+ Profile</h1>
+    <img id="gplus_sidebar_profile_img" src="http://www.gravatar.com/avatar/{{ site.googleplus_user }}?d=mm" />
+    <a href="https://plus.google.com/109372953760940036839/posts/"><p id="gplus_sidebar_profile_displayName">loading...</p></a>
+    <p id="gplus_sidebar_profile_aboutMe">loading...</p>
+  </div>
+</section>
+{% endif %}

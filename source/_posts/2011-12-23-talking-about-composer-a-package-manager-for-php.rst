@@ -5,6 +5,7 @@ slug: talking-about-composer-a-package-manager-for-php
 status: publish
 title: Talking about Composer, a package manager for PHP
 wordpress_id: '271'
+comments: true
 categories:
 - PHP
 - Programming

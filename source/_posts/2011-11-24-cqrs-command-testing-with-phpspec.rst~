@@ -5,6 +5,7 @@ slug: cqrs-command-testing-with-phpspec
 status: publish
 title: CQRS command testing with PHPSpec
 wordpress_id: '225'
+comments: true
 categories:
 - Behavior Driven Development
 - PHP

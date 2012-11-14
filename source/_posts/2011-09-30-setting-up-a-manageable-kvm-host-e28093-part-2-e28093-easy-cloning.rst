@@ -5,6 +5,7 @@ slug: setting-up-a-manageable-kvm-host-%e2%80%93-part-2-%e2%80%93-easy-cloning
 status: publish
 title: Setting up a manageable KVM host – part 2 – Easy Cloning
 wordpress_id: '181'
+comments: true
 categories:
 - Server Administration
 - Virtualization

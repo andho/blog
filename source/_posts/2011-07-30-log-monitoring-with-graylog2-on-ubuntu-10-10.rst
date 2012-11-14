@@ -5,6 +5,7 @@ slug: log-monitoring-with-graylog2-on-ubuntu-10-10
 status: publish
 title: Log monitoring with graylog2 on ubuntu 10.10
 wordpress_id: '105'
+comments: true
 categories:
 - Server Administration
 tags:

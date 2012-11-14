@@ -5,6 +5,7 @@ slug: setting-up-a-manageable-kvm-host-part-1-using-lvm-for-storage
 status: publish
 title: Setting up a manageable KVM host - part 1 - using LVM for storage
 wordpress_id: '23'
+comments: true
 categories:
 - Server Administration
 - Virtualization

@@ -5,6 +5,7 @@ slug: behavior-driven-development-with-php-and-phpspec-web-runner
 status: publish
 title: Behavior Driven Development with PHP and PHPSpec Web Runner
 wordpress_id: '24'
+comments: true
 categories:
 - Behavior Driven Development
 - PHP

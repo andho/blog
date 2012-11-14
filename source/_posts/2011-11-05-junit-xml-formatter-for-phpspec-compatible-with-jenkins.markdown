@@ -5,6 +5,7 @@ slug: junit-xml-formatter-for-phpspec-compatible-with-jenkins
 status: publish
 title: Junit.xml formatter for PHPSpec, compatible with jenkins
 wordpress_id: '233'
+comments: true
 categories:
 - Continuous Integration
 - Programming

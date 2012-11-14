@@ -5,6 +5,7 @@ slug: getting-to-know-php-namespaces
 status: publish
 title: Getting to know PHP namespaces
 wordpress_id: '21'
+comments: true
 categories:
 - PHP
 - Programming

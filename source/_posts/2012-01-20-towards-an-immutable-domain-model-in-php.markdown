@@ -6,6 +6,7 @@ status: open
 title: Towards an immutable domain model, in PHP
 wordpress_id: '178'
 published: false
+comments: true
 ---
 
 I first saw the application of immutability to a domain written on ZilverBlog: [Towards an immutable domain model](http://blog.zilverline.com/2011/02/01/towards-an-immutable-domain-model-introduction-part-1/). I instantly found that this would be really helpful in modelling a complex system. This article is about how I (tried to) implemented an Immutable Domain Model in PHP.

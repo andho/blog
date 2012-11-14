@@ -5,6 +5,7 @@ slug: None
 status: open
 title: 'Word of the year: Monads'
 wordpress_id: '160'
+comments: true
 published: false
 ---
 
