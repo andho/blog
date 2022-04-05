@@ -6,3 +6,11 @@ theme = 'm10c'
 [params]
   autho = 'Andho Mohamed'
   description = 'Im a software developer from the Maldives. Passionate about building beautiful systems on the inside.'
+  [[params.social]]
+    icon = "linkedin"
+    name = "LinkedIn"
+    url = "https://www.linkedin.com/in/andhomv/"
+  [[params.social]]
+    icon = "github"
+    name = "Github"
+    url = "https://github.com/andho"
