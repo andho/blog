@@ -9,7 +9,7 @@ Tags = ["ssh", "operations", "linux", "ops-log"]
 
 The following text is an ops log entry. A brain dump.
 
-Some research was done before but nothing was recorded. The first google seach
+Some research was done before but nothing was recorded. The first google search
 pointed to a project called https://github.com/cloudtools/ssh-cert-authority.
 This project automates the process of signing and allows delegation of signing
 requests to multiple signers, set number of signatures required and have
